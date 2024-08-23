@@ -70,10 +70,12 @@ func (g *Group) Get(key string) (ByteView, error) {
 	return g.load(key)
 }
 
+// load value for a key from cache
 func (g *Group) load(key string) (value ByteView, err error) {
 	return g.getLocally(key)
 }
 
+// getLocally value for a key from cache
 func (g *Group) getLocally(key string) (ByteView, error) {
 	bytes, err := g.getter.Get(key)
 	if err != nil {
@@ -85,6 +87,7 @@ func (g *Group) getLocally(key string) (ByteView, error) {
 	return value, nil
 }
 
+// populateCache value for a key from cache
 func (g *Group) populateCache(key string, value ByteView) {
 	g.mainCache.add(key, value)
 }
