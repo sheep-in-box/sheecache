@@ -9,7 +9,7 @@ type Cache struct {
 	ll       *list.List // doubly linked list to store the cache items
 	cache    map[string]*list.Element
 	// callback function when an entry is purged, can be nil.
-	OnEvicted func(key string, value Value) //某条记录被移除时的回调函数，可以为nil
+	OnEvicted func(key string, value Value)
 }
 
 // entry is a key-value pair.

@@ -7,16 +7,16 @@ import (
 
 // cache is a thread-safe cache that implements a least-recently-used (LRU) cache.
 type cache struct {
-	mu         sync.Mutex
-	lru        *lru.Cache
-	cacheBytes int64
+	mu         sync.Mutex // protects lru
+	lru        *lru.Cache // lru cache
+	cacheBytes int64      // max memory bytes allowed
 }
 
 // add adds a value to the cache.
 func (c *cache) add(key string, value ByteView) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	if c.lru == nil { //延迟初始化
+	if c.lru == nil { // lazy initialization
 		c.lru = lru.New(c.cacheBytes, nil)
 	}
 	c.lru.Add(key, value)

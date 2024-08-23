@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const defaultBasePath = "/_geecache/"
+const defaultBasePath = "/_sheecache/"
 
 // HTTPPool implements PeerPicker for a pool of HTTP peers.
 type HTTPPool struct {
@@ -25,7 +25,7 @@ func NewHTTPPool(self string) *HTTPPool {
 }
 
 // Log info with server name
-func (p *HTTPPool) Log(format string, v ...interface{}) {
+func (p *HTTPPool) Log(format string, v ...any) {
 	log.Printf("[Server %s] %s", p.self, fmt.Sprintf(format, v...))
 }
 
