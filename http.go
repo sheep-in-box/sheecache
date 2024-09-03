@@ -2,18 +2,26 @@ package sheecache
 
 import (
 	"fmt"
+	"github.com/sheep-in-box/sheecache/consistenthash"
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 )
 
-const defaultBasePath = "/_sheecache/"
+const (
+	defaultBasePath = "/_geecache/"
+	defaultReplicas = 50
+)
 
 // HTTPPool implements PeerPicker for a pool of HTTP peers.
 type HTTPPool struct {
 	// this peer's base URL, e.g. "https://example.net:8000"
-	self     string
-	basePath string
+	self        string
+	basePath    string
+	mu          sync.Mutex // guards peers and httpGetters
+	peers       *consistenthash.Map
+	httpGetters map[string]*httpGetter // keyed by e.g. "http://10.0.0.2:8008"
 }
 
 // NewHTTPPool initializes an HTTP pool of peers.
