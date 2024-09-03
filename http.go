@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	defaultBasePath = "/_geecache/"
+	defaultBasePath = "/_sheecache/"
 	defaultReplicas = 50
 )
 
