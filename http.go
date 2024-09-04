@@ -42,6 +42,29 @@ func (h *httpGetter) Get(group string, key string) ([]byte, error) {
 
 var _ PeerGetter = (*httpGetter)(nil)
 
+const (
+	defaultBasePath = "/_sheecache/"
+	defaultReplicas = 50
+)
+
+// HTTPPool implements PeerPicker for a pool of HTTP peers.
+type HTTPPool struct {
+	// this peer's base URL, e.g. "https://example.net:8000"
+	self        string
+	basePath    string
+	mu          sync.Mutex // guards peers and httpGetters
+	peers       *consistenthash.Map
+	httpGetters map[string]*httpGetter // keyed by e.g. "http://10.0.0.2:8008"
+}
+
+// NewHTTPPool initializes an HTTP pool of peers.
+func NewHTTPPool(self string) *HTTPPool {
+	return &HTTPPool{
+		self:     self,
+		basePath: defaultBasePath,
+	}
+}
+
 // Set updates the pool's list of peers.
 func (p *HTTPPool) Set(peers ...string) {
 	p.mu.Lock()
@@ -66,29 +89,6 @@ func (p *HTTPPool) PickPeer(key string) (PeerGetter, bool) {
 }
 
 var _ PeerPicker = (*HTTPPool)(nil)
-
-const (
-	defaultBasePath = "/_sheecache/"
-	defaultReplicas = 50
-)
-
-// HTTPPool implements PeerPicker for a pool of HTTP peers.
-type HTTPPool struct {
-	// this peer's base URL, e.g. "https://example.net:8000"
-	self        string
-	basePath    string
-	mu          sync.Mutex // guards peers and httpGetters
-	peers       *consistenthash.Map
-	httpGetters map[string]*httpGetter // keyed by e.g. "http://10.0.0.2:8008"
-}
-
-// NewHTTPPool initializes an HTTP pool of peers.
-func NewHTTPPool(self string) *HTTPPool {
-	return &HTTPPool{
-		self:     self,
-		basePath: defaultBasePath,
-	}
-}
 
 // Log info with server name
 func (p *HTTPPool) Log(format string, v ...any) {
